@@ -1,1 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <link rel="stylesheet" href="css/main.css">
+    <!-- <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Orbitron' type='text/css'> -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Wallpoet&display=swap" rel="stylesheet">
+    <title>Mine Sweeper</title>
+</head>
+
+<body onload="onInit()">
+    <div class="box">
+        <h2>Mine Sweeper</h2>
+        <!-- <input type="number" oninput="onInit()" value="3" min="2" max="6" onkeydown="return false"> -->
+        <div>
+            <span class="stats non-button mark-count">000</span>
+            <span class="stats status-emoji button" onclick="onInit()">😊</span>
+            <span class="stats non-button timer">000</span>
+        </div>
+        <div class="box board">
+            <table></table>
+        </div>
+    </div>
+
+    <!-- <h3 style="color:aliceblue; margin-top: 10%;">Yair Benharroch</h3> -->
+
+    <div class="modal">
+        <h4><span></span><br>in <span></span> seconds</h4>
+        <!-- <button onclick="onInit()">New Game</button> -->
+    </div>
+
+    <script src="js/mine_main.js"></script>
+    <script src="js/utils.js"></script>
+</body>
+
+</html>

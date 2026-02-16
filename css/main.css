@@ -1,0 +1,126 @@
+body {
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: rgb(1, 1, 55);
+    background-image: url("../flowers.webp");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+:root {
+    --bg: #c0c0c0;
+    /* classic gray */
+    --light: #ffffff;
+    /* highlight edge */
+    --mid: #d9d9d9;
+    /* inner light */
+    --dark: #808080;
+    /* shadow edge */
+    --darker: #404040;
+    /* deepest shadow */
+}
+
+table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+
+.box {
+    max-width: 360px;
+    padding: 10px;
+    border: 1px solid lightblue;
+    background-color: rgb(156, 217, 237);
+    border-radius: 20% 0%;
+    margin: 10px auto;
+    /* opacity: 0.8; */
+}
+
+input {
+    max-width: 40px;
+}
+
+.board {
+    /* max-width: 250px; */
+}
+
+td {
+    padding: 0;
+}
+
+.button {
+    width: 40px;
+    height: 40px;
+    box-sizing: border-box;
+    place-items: center;
+    cursor: pointer;
+    border-radius: 20%;
+    background-color: rgb(87, 186, 248);
+    border-top: 3px solid var(--light);
+    border-left: 3px solid var(--light);
+    border-right: 3px solid var(--dark);
+    border-bottom: 3px solid var(--dark);
+    padding: 0px;
+}
+
+td button {
+    width: 25px;
+    height: 25px;
+    display: grid;
+}
+
+
+
+.revealed {
+    background-color: rgb(174, 212, 216);
+    /* border: 3px solid rgb(255, 255, 255); */
+    color: rgb(2, 32, 57);
+    font-style:oblique;
+    font-size: large;
+    border-top: 3px solid var(--dark);
+    border-left: 3px solid var(--dark);
+    border-right: 3px solid var(--light);
+    border-bottom: 3px solid var(--light);
+}
+
+
+.stats {
+    /* font-family: 'Orbitron', system-ui, sans-serif; */
+  font-family: "Wallpoet", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 30px;
+    background-color: rgb(255, 255, 255);
+    width: 100px;
+    margin: 10px;
+    border-radius: 20% 0%;
+    padding: 5px
+}
+
+.non-button {
+    border: 3px solid rgb(255, 255, 255);
+}
+
+.modal {
+    position: absolute;
+    max-width: 340px;
+    bottom: 1%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 0px solid rgb(156, 217, 237);
+    color: aliceblue;
+    background-color: rgb(1, 1, 55);
+    border-radius: 20% 0%;
+    padding: 5px 20px;
+    opacity: 0.7;
+    transition: 2s;
+}
+
+.modal span {
+    color: rgb(137, 193, 242);
+}
+
+.hidden {
+    display: none;
+    opacity: 0;
+}
