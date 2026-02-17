@@ -26,6 +26,16 @@ table {
     border-spacing: 0px;
 }
 
+td {
+    padding: 0;
+}
+
+td button {
+    width: 25px;
+    height: 25px;
+    display: grid;
+}
+
 .box {
     max-width: 360px;
     padding: 10px;
@@ -36,16 +46,8 @@ table {
     /* opacity: 0.8; */
 }
 
-input {
-    max-width: 40px;
-}
-
 .board {
     /* max-width: 250px; */
-}
-
-td {
-    padding: 0;
 }
 
 .button {
@@ -63,14 +65,6 @@ td {
     padding: 0px;
 }
 
-td button {
-    width: 25px;
-    height: 25px;
-    display: grid;
-}
-
-
-
 .revealed {
     background-color: rgb(174, 212, 216);
     /* border: 3px solid rgb(255, 255, 255); */
@@ -83,6 +77,9 @@ td button {
     border-bottom: 3px solid var(--light);
 }
 
+.levels {
+    margin: 2%;
+}
 
 .stats {
     /* font-family: 'Orbitron', system-ui, sans-serif; */

@@ -11,12 +11,17 @@
 </head>
 
 <body onload="onInit()">
+    <div class="levels">
+        <span class="stats button" onclick="onInit(1)">Beginner</span>
+        <span class="stats button" onclick="onInit(2)">Intermediate</span>
+        <span class="stats button" onclick="onInit(3)">Advanced</span>
+    </div>
     <div class="box">
         <h2>Mine Sweeper</h2>
         <!-- <input type="number" oninput="onInit()" value="3" min="2" max="6" onkeydown="return false"> -->
         <div>
-            <span class="stats non-button mark-count">000</span>
-            <span class="stats status-emoji button" onclick="onInit()">😊</span>
+            <span class="stats mark-count non-button">000</span>
+            <span class="stats button status-emoji" onclick="onInit()">😊</span>
             <span class="stats non-button timer">000</span>
         </div>
         <div class="box board">
@@ -24,15 +29,16 @@
         </div>
     </div>
 
-    <!-- <h3 style="color:aliceblue; margin-top: 10%;">Yair Benharroch</h3> -->
+    <h3 style="color:aliceblue; margin-top: 10%;">Yair Benharroch</h3>
 
     <div class="modal">
         <h4><span></span><br>in <span></span> seconds</h4>
         <!-- <button onclick="onInit()">New Game</button> -->
     </div>
 
-    <script src="js/mine_main.js"></script>
+    <script src="js/main.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/dom_utils.js"></script>
 </body>
 
 </html>
