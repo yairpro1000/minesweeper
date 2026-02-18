@@ -4,25 +4,28 @@
 <head>
     <link rel="stylesheet" href="css/main.css">
     <!-- <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Orbitron' type='text/css'> -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=VT323&family=Wallpoet&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Wallpoet&display=swap" rel="stylesheet">
     <title>Mine Sweeper</title>
 </head>
 
 <body onload="onInit()">
-    <h3 style="color:rgb(0, 52, 97); position: relative;">Yair Benharroch</h3>
+    <h3 style="color: rgb(1, 1, 55); position: relative;">Yair Benharroch</h3>
+    <h1>💣MineSweeper💣</h2>
     <div class="levels"></div>
     <div class="box">
-        <h2>Mine Sweeper</h2>
         <!-- <input type="number" oninput="onInit()" value="3" min="2" max="6" onkeydown="return false"> -->
         <div>
             <span class="stats non-button mark-count">000</span>
-            <!-- <span class="stats non-button lives"></span> -->
-            <span class="stats button status-emoji" onclick="onInit()">😊</span>
+            <span class="stats non-button lives"></span>
             <span class="stats non-button timer">000</span>
         </div>
-        <div><span class="stats non-button lives"></span></div>
+        <div>
+            <span class="stats button safe" onclick="OnSafeClicked(this)"></span>
+            <span class="stats button status-emoji" onclick="onInit()">😊</span>
+            <span class="stats button hints" onclick="onHintClicked()"></span>
+        </div>
         <div class="box board">
             <table></table>
         </div>

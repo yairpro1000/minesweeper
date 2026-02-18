@@ -35,19 +35,21 @@ td {
 }
 
 td button {
+    background-color: rgb(87, 186, 248);
     width: 25px;
     height: 25px;
     display: grid;
+    box-sizing: border-box;
+    place-items: center;
 }
 
 .box {
     max-width: fit-content;
     padding: 20px;
-    border: 1px solid lightblue;
-    background-color: rgb(156, 217, 237);
-    border-radius: 20% 0%;
+    background-color: rgb(1, 1, 55);
+    /* border-radius: 20% 0%; */
     margin: 10px auto 20px auto;
-    /* opacity: 0.8; */
+    opacity: 0.9;
 }
 
 .board {
@@ -57,16 +59,13 @@ td button {
 .button {
     width: 40px;
     height: 40px;
-    box-sizing: border-box;
-    place-items: center;
     cursor: pointer;
     border-radius: 20%;
-    background-color: rgb(87, 186, 248);
     border-top: 3px solid var(--light);
     border-left: 3px solid var(--light);
     border-right: 3px solid var(--dark);
     border-bottom: 3px solid var(--dark);
-    padding: 0px;
+    /* padding: 0px; */
 }
 
 .revealed {
@@ -91,33 +90,41 @@ td button {
     font-weight: 400;
     font-style: normal;
     font-size: 30px;
-    background-color: rgb(255, 255, 255);
+    color: white;
+    /* background-color: rgb(87, 186, 248); */
+    background-color: rgb(1, 1, 55);
     width: 100px;
-    /* height: 30px; */
+    height: 30px;
     margin: 10px;
-    border-radius: 20% 0%;
+    /* border-radius: 20% 0%; */
     padding: 5px;
-    
+    place-items: center;
+    font-size: 30px
+}
+
+.stats .button {
+    background-color: rgb(1, 1, 55);
 }
 
 .non-button {
-    border: 3px solid rgb(255, 255, 255);
-    display: inline-block inline-block
+    background-color: rgb(1, 1, 55);
+    border: 3px solid rgb(1, 1, 55);
+    display: inline-block;
 }
 
 .modal {
     position: absolute;
-    max-width: 340px;
-    bottom: 1%;
+    max-width: fit-content;
     left: 50%;
+    bottom: 2%;
     transform: translate(-50%, -50%);
-    border: 0px solid rgb(156, 217, 237);
+    border: 2px solid rgb(156, 217, 237);
     color: aliceblue;
     background-color: rgb(1, 1, 55);
     border-radius: 20% 0%;
     padding: 5px 20px;
-    opacity: 0.7;
-    transition: 2s;
+    opacity: 1;
+    transition: 1.5s;
 }
 
 .modal span {
@@ -126,10 +133,20 @@ td button {
 
 .hidden {
     display: none;
+}
+
+.modal-fade {
     opacity: 0;
+    bottom: 90%
+        /* position: absolute */
 }
 
 .red {
     background-color: red;
-    border: 0px;
+    border: 3px red;
+}
+
+.yellow {
+    background-color: yellow;
+    /* border: 3px yellow; */
 }

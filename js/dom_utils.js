@@ -9,6 +9,8 @@ function resetStats() {
     document.querySelector('.timer').innerText = '000'
     document.querySelector('.mark-count').innerText = '000'
     renderLivesCounter(gGame.lives)
+    renderHintsCounter(gGame.hints)
+    renderSafeClick(gGame.safeClicks)
     setSmily(SMILE)
     document.querySelector('.box').classList.remove(WARNING_CSS_CLASS)
 }
@@ -21,22 +23,40 @@ function renderMarkCounter() {
 }
 
 function renderLivesCounter(numLives) {
-    const lifeCounter = document.querySelector('.lives')
+    const elLifeCounter = document.querySelector('.lives')
     if (numLives === -1) {
-        lifeCounter.classList.add('hidden')
+        elLifeCounter.classList.add('hidden')
         return
     }
 
-    lifeCounter.classList.remove('hidden', WARNING_CSS_CLASS)
+    elLifeCounter.classList.remove('hidden', WARNING_CSS_CLASS)
     if (numLives === 1) {
-        lifeCounter.innerText = LAST_LIFE
-        lifeCounter.classList.add(WARNING_CSS_CLASS)
+        elLifeCounter.innerText = LAST_LIFE
+        elLifeCounter.classList.add(WARNING_CSS_CLASS)
         setSmily(SCARED)
     }
-    else if (numLives === 0) lifeCounter.innerText = SAVED_LIFE
-    else lifeCounter.innerText = LIFE.repeat(numLives)
+    else if (numLives === 0) elLifeCounter.innerText = SAVED_LIFE
+    else elLifeCounter.innerText = LIFE.repeat(numLives)
+}
 
+function renderHintsCounter(numHints) {
+    const elHintsCounter = document.querySelector('.hints')
+    if (numHints === 0) {
+        elHintsCounter.classList.add('hidden')
+        return
+    }
+    elHintsCounter.innerText = HINT_BULB.repeat(numHints)
+    elHintsCounter.classList.remove('yellow', 'hidden')
+}
 
+function renderSafeClick(numSafeClicks) {
+    const elSafeClick = document.querySelector('.safe')
+    if (numSafeClicks === 0) {
+        elSafeClick.classList.add('hidden')
+        return
+    }
+    elSafeClick.innerText = SAFE.repeat(numSafeClicks)
+    elSafeClick.classList.remove('yellow', 'hidden')
 }
 
 function setSmily(emoji) {
@@ -73,16 +93,32 @@ function showModal(isVictory = false) {
         elBox.classList.add(WARNING_CSS_CLASS)
     }
     elModalSpans[1].innerText = gFinishTime
-    elModal.classList.remove('hidden')
+    // elModal.style.opacity = 1
+    elModal.classList.remove('modal-fade')
+    
 }
 
 function hideModal() {
     const elModal = document.querySelector('.modal')
-    elModal.classList.add('hidden')
+    // elModal.style.opacity = 0
+    elModal.classList.add('modal-fade')
 }
 
 // for debug
 function revealBoard(board, isMinesOnly = false) {
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board.length; j++) {
+            const cell = board[i][j]
+            var txt
+            if (cell.isMine) txt = MINE
+            else if (isMinesOnly) continue
+            else txt = cell.minesAroundCount
+            renderCell(i, j, txt)
+        }
+    }
+}
+
+function revealNegs(board, isMinesOnly = false) {
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board.length; j++) {
             const cell = board[i][j]
