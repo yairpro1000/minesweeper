@@ -3,20 +3,31 @@
 const MINE = '💣'
 const FLAG = '🚩'
 const SMILE = '😊'
-const SAD = '😒'
+const LOSE = '🤦🏻'
+const SCARED = '😳'
+const WIN = '😎'
+const LIFE = '👼🏻'
+const LAST_LIFE = '☠️'
+const SAVED_LIFE = '🫠'
 
+const WARNING_CSS_CLASS = 'red'
+
+const MAX_LIVES = 3 // set to -1 to avoid feature
 const LEVELS = {
     1: {
-        SIZE: 4,
-        MINES: 4
+        name: 'Beginner',
+        size: 4,
+        mines: 2
     },
     2: {
-        SIZE: 6,
-        MINES: 8
+        name: 'Medium',
+        size: 8,
+        mines: 14
     },
     3: {
-        SIZE: 8,
-        MINES: 15
+        name: 'Expert',
+        size: 12,
+        mines: 32
     },
 }
 
@@ -37,16 +48,20 @@ function onInit(userLevel) {
     // else: there is already a gUserLevel from previous choice, so no need to update it
     gLevel = LEVELS[gUserLevel]
 
-    hideModal()
-    resetStats()
-    buildBoard()
-
     gGame = {
         isOn: false,
         revealedCount: 0,
         markedCount: 0,
-        secsPassed: 0
+        secsPassed: 0,
+        lives: MAX_LIVES
     }
+
+    hideModal()
+    renderLevelButtons()
+    resetStats()
+    buildBoard()
+
+
 }
 
 function onCellClicked(elCell, i, j) {
@@ -58,19 +73,22 @@ function onCellClicked(elCell, i, j) {
     if (gGame.revealedCount === 0) { // Set mines after the user clickes their first cell
         setMines(i, j)
         setMinesNegsCount(gBoard)
+        // revealBoard(gBoard, true) // JUST FOR DEBUG
     }
 
 
     const cell = gBoard[i][j]
     if (cell.isMine) { // Clicked a mine
-        gameOver(false)
-        return
-    }
+        if (gGame.lives <= 1) {// -1 means lives feature off 
+            gameOver(false)
+            return
+        }
+        gGame.lives--
+        renderLivesCounter(gGame.lives)
+        renderCell(i, j, MINE, WARNING_CSS_CLASS)
+        setTimeout(() => {renderCell(i,j, '', WARNING_CSS_CLASS)}, 500)
 
-    elCell.classList.add('revealed')
-    gGame.revealedCount++
-    cell.isRevealed = true
-    if (cell.isMarked) updateMark(cell, elCell, false) // remove flag
+    }
 
     expandReveal_recur(gBoard, i, j)
 
@@ -79,7 +97,7 @@ function onCellClicked(elCell, i, j) {
 
 function onCellMarked(elCell, i, j) {
     if (!gGame.isOn) return
-    
+
     const cell = gBoard[i][j]
     // Don't flag revealed cells
     if (cell.isRevealed) return
@@ -90,7 +108,7 @@ function onCellMarked(elCell, i, j) {
         return
     }
 
-    if (gGame.markedCount === gLevel.MINES) return
+    if (gGame.markedCount === gLevel.mines) return
 
     updateMark(cell, elCell, true)
 
@@ -103,7 +121,7 @@ function startGame() {
 }
 
 function checkVictory() {
-    if (gGame.markedCount + gGame.revealedCount === gLevel.SIZE ** 2) gameOver(true)
+    if (gGame.markedCount + gGame.revealedCount === gLevel.size ** 2) gameOver(true)
 
 }
 
@@ -112,11 +130,26 @@ function gameOver(isVictory) {
     stopTimer()
     revealMines()
     showModal(isVictory)
-    setSmily(isVictory)
+
+    if (isVictory && gGame.lives === 1) renderLivesCounter(0)
+    if (isVictory) setSmily(WIN)
+    else setSmily(LOSE)
+    
 }
 
 
 // Board functions
+
+function renderLevelButtons() {
+    const elDiv = document.querySelector('.levels')
+
+    var strHTML = ''
+    for (var level in LEVELS) {
+        strHTML += `<span class="stats button" onclick="onInit(${level})">${LEVELS[level].name}</span>\n`
+    }
+
+    elDiv.innerHTML = strHTML
+}
 
 function buildBoard() {
     createCells()
@@ -125,9 +158,9 @@ function buildBoard() {
 
 function createCells() {
     gBoard = []
-    for (var i = 0; i < gLevel.SIZE; i++) {
+    for (var i = 0; i < gLevel.size; i++) {
         gBoard[i] = []
-        for (var j = 0; j < gLevel.SIZE; j++) {
+        for (var j = 0; j < gLevel.size; j++) {
             gBoard[i].push(createCell())
         }
     }
@@ -152,6 +185,7 @@ function renderBoard() {
             strHTML += `<td>
             <button class="cell-${i}-${j} button" 
             onclick="onCellClicked(this, ${i}, ${j})" oncontextmenu="onCellMarked(this, ${i}, ${j})">
+
             </button>
             </td>`
         }
@@ -159,13 +193,11 @@ function renderBoard() {
     }
     elTable.innerHTML = strHTML
     elTable.addEventListener("contextmenu", (e) => { e.preventDefault() })
-
-    // document.querySelector('h3 span').innerText = 1
 }
 
 function setMines(i, j) {
     gMines = []
-    for (var m = 0; m < gLevel.MINES; m++) {
+    for (var m = 0; m < gLevel.mines; m++) {
         const row = getRandomInt(0, gBoard.length)
         const col = getRandomInt(0, gBoard[row].length)
 
@@ -178,7 +210,7 @@ function setMines(i, j) {
         gMines.push({ row, col })
     }
 
-    updateMarkCounter()
+    renderMarkCounter()
 }
 
 function setMinesNegsCount(board) {
@@ -213,21 +245,20 @@ function expandReveal_recur(board, i, j) {
 
         for (var col = j - 1; col <= j + 1; col++) {
             if (col < 0 || col === board[row].length) continue
-            if (row === i && col === j) continue
 
             const cell = board[row][col]
-            const currElCell = document.querySelector(`.cell-${row}-${col}`)
-            // No need to work on already revealed cells
-            if (cell.isRevealed) continue
             // Don't reveal mines
             if (cell.isMine) continue
+            // No need to work on already revealed cells
+            if (cell.isRevealed) continue
 
             // remove flag
             if (cell.isMarked) updateMark(cell, currElCell, false)
 
             cell.isRevealed = true
             gGame.revealedCount++
-            
+
+            const currElCell = getElCell(row, col)
             currElCell.classList.add('revealed')
 
             if (cell.minesAroundCount > 0) currElCell.innerText = cell.minesAroundCount
@@ -249,9 +280,9 @@ function revealMines(board) {
 
 
 // Stats calculations and update
-function updateMark(cell, elCell, isMark) { 
+function updateMark(cell, elCell, isMark) {
     cell.isMarked = isMark
-        gGame.markedCount += isMark? 1 : -1
-        elCell.innerText = isMark? FLAG : ''
-        updateMarkCounter()
+    gGame.markedCount += isMark ? 1 : -1
+    elCell.innerText = isMark ? FLAG : ''
+    renderMarkCounter()
 }

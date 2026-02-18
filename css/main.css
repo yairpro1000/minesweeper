@@ -7,6 +7,10 @@ body {
     background-repeat: no-repeat;
 }
 
+div {
+    margin: 10px;
+}
+
 :root {
     --bg: #c0c0c0;
     /* classic gray */
@@ -37,12 +41,12 @@ td button {
 }
 
 .box {
-    max-width: 360px;
-    padding: 10px;
+    max-width: fit-content;
+    padding: 20px;
     border: 1px solid lightblue;
     background-color: rgb(156, 217, 237);
     border-radius: 20% 0%;
-    margin: 10px auto;
+    margin: 10px auto 20px auto;
     /* opacity: 0.8; */
 }
 
@@ -69,7 +73,7 @@ td button {
     background-color: rgb(174, 212, 216);
     /* border: 3px solid rgb(255, 255, 255); */
     color: rgb(2, 32, 57);
-    font-style:oblique;
+    font-style: oblique;
     font-size: large;
     border-top: 3px solid var(--dark);
     border-left: 3px solid var(--dark);
@@ -83,19 +87,22 @@ td button {
 
 .stats {
     /* font-family: 'Orbitron', system-ui, sans-serif; */
-  font-family: "Wallpoet", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  font-size: 30px;
+    font-family: "Wallpoet", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 30px;
     background-color: rgb(255, 255, 255);
     width: 100px;
+    /* height: 30px; */
     margin: 10px;
     border-radius: 20% 0%;
-    padding: 5px
+    padding: 5px;
+    
 }
 
 .non-button {
     border: 3px solid rgb(255, 255, 255);
+    display: inline-block inline-block
 }
 
 .modal {
@@ -120,4 +127,9 @@ td button {
 .hidden {
     display: none;
     opacity: 0;
+}
+
+.red {
+    background-color: red;
+    border: 0px;
 }

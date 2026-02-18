@@ -11,25 +11,22 @@
 </head>
 
 <body onload="onInit()">
-    <div class="levels">
-        <span class="stats button" onclick="onInit(1)">Beginner</span>
-        <span class="stats button" onclick="onInit(2)">Intermediate</span>
-        <span class="stats button" onclick="onInit(3)">Advanced</span>
-    </div>
+    <h3 style="color:rgb(0, 52, 97); position: relative;">Yair Benharroch</h3>
+    <div class="levels"></div>
     <div class="box">
         <h2>Mine Sweeper</h2>
         <!-- <input type="number" oninput="onInit()" value="3" min="2" max="6" onkeydown="return false"> -->
         <div>
-            <span class="stats mark-count non-button">000</span>
+            <span class="stats non-button mark-count">000</span>
+            <!-- <span class="stats non-button lives"></span> -->
             <span class="stats button status-emoji" onclick="onInit()">😊</span>
             <span class="stats non-button timer">000</span>
         </div>
+        <div><span class="stats non-button lives"></span></div>
         <div class="box board">
             <table></table>
         </div>
     </div>
-
-    <h3 style="color:aliceblue; margin-top: 10%;">Yair Benharroch</h3>
 
     <div class="modal">
         <h4><span></span><br>in <span></span> seconds</h4>
