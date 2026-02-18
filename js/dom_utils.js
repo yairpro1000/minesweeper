@@ -12,6 +12,8 @@ function resetStats() {
     renderHintsCounter(gGame.hints)
     renderSafeClick(gGame.safeClicks)
     setSmily(SMILE)
+    document.querySelector('.exterminator').classList.remove('hidden')
+    updateMega(['hidden', 'yellow'], false)
     document.querySelector('.box').classList.remove(WARNING_CSS_CLASS)
 }
 
@@ -59,6 +61,12 @@ function renderSafeClick(numSafeClicks) {
     elSafeClick.classList.remove('yellow', 'hidden')
 }
 
+function updateMega(_classes, isAdd=true) {
+    const elMega = document.querySelector('.mega')
+    if (isAdd) elMega.classList.add(..._classes)
+    else elMega.classList.remove(..._classes)
+}
+
 function setSmily(emoji) {
     document.querySelector('.status-emoji').innerText = emoji
 }
@@ -95,7 +103,7 @@ function showModal(isVictory = false) {
     elModalSpans[1].innerText = gFinishTime
     // elModal.style.opacity = 1
     elModal.classList.remove('modal-fade')
-    
+
 }
 
 function hideModal() {
@@ -132,8 +140,16 @@ function revealNegs(board, isMinesOnly = false) {
 }
 
 function renderCell(i, j, txt, _class = null) {
+    const cell = gBoard[i][j]
     const elCell = getElCell(i, j)
+
     elCell.innerText = txt
+
+    if (cell.isRevealed) elCell.classList.add('revealed')
+    else elCell.classList.remove('revealed')
+
+    elCell.classList.remove('yellow')
+    
     if (_class) elCell.classList.toggle(_class)
 }
 

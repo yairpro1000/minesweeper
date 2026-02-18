@@ -112,6 +112,11 @@ td button {
     display: inline-block;
 }
 
+/* 
+.lives {
+    border: solid lightblue;
+} */
+
 .modal {
     position: absolute;
     max-width: fit-content;
@@ -148,5 +153,6 @@ td button {
 
 .yellow {
     background-color: yellow;
+    color: rgb(1, 1, 55);
     /* border: 3px yellow; */
 }

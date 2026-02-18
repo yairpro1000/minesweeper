@@ -43,6 +43,7 @@ var gGame
 var gBoard
 var gMines
 var gSafeCells
+var gMegaPoss
 
 
 
@@ -62,7 +63,8 @@ function onInit(userLevel) {
         lives: MAX_LIVES,
         hints: MAX_HINTS,
         isHintOn: false,
-        safeClicks: MAX_SAFE_CLICKS
+        safeClicks: MAX_SAFE_CLICKS,
+        isMegaOn: false,
     }
 
     hideModal()
@@ -81,7 +83,7 @@ function onHintClicked() {
     hintsCounter.classList.toggle('yellow')
 }
 
-function OnSafeClicked(elSafeClick) {
+function OnSafeClicked() {
     if (!gGame.isOn) return
 
     if (!gGame.isOn || gGame.revealedCount + gLevel.mines === gLevel.size ** 2) {
@@ -93,7 +95,6 @@ function OnSafeClicked(elSafeClick) {
     for (var i = 0; i <= gMines.length; i++) {
         const row = getRandomInt(0, gBoard.length)
         const col = getRandomInt(0, gBoard[row].length)
-        console.log(row, col)
 
         if (!gBoard[row][col].isMine && !gBoard[row][col].isRevealed) {
             gGame.safeClicks--
@@ -106,6 +107,36 @@ function OnSafeClicked(elSafeClick) {
         }
         else i--
     }
+}
+
+function onExterminatorClicked(elExterminator) {
+    if (!gGame.isOn) return
+
+    elExterminator.classList.add('hidden')
+
+    const numIter = Math.min(3, gLevel.mines)
+    for (var i = 0; i < numIter; i++) {
+        const idx = getRandomInt(0, gMines.length)
+        const minePos = gMines[idx]
+        gBoard[minePos.row][minePos.col].isMine = false
+        gLevel.mines--
+        renderMarkCounter()
+        gMines.splice(idx, 1)
+
+    }
+    setMinesNegsCount(gBoard)
+    updateBoard()
+    // revealBoard(gBoard, true)
+
+
+}
+
+function OnMegaClicked(elMega) {
+    if (!gGame.isOn) return
+
+    gMegaPoss = []
+    gGame.isMegaOn = true
+    elMega.classList.add('yellow')
 }
 
 function onCellClicked(elCell, i, j) {
@@ -124,10 +155,22 @@ function onCellClicked(elCell, i, j) {
         return
     }
 
+    if (gGame.isMegaOn) {
+        gMegaPoss.push({ i, j })
+        elCell.classList.add('yellow')
+        
+        if (gMegaPoss.length === 2) {
+            gGame.isMegaOn = false
+            revealArea(gBoard, ...gMegaPoss)
+            updateMega(['hidden'])
+        }
+        return
+    }
+
     if (gGame.revealedCount === 0) { // Set mines after the user clickes their first cell
         setMines(i, j)
         setMinesNegsCount(gBoard)
-        // revealBoard(gBoard, true) // JUST FOR DEBUG
+        // revealBoard(gBoard, false) // JUST FOR DEBUG
     }
 
 
@@ -239,7 +282,6 @@ function renderBoard() {
             strHTML += `<td>
             <button class="cell-${i}-${j} button" 
             onclick="onCellClicked(this, ${i}, ${j})" oncontextmenu="onCellMarked(this, ${i}, ${j})">
-
             </button>
             </td>`
         }
@@ -247,6 +289,18 @@ function renderBoard() {
     }
     elTable.innerHTML = strHTML
     elTable.addEventListener("contextmenu", (e) => { e.preventDefault() })
+}
+
+function updateBoard() {
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[i].length; j++) {
+            const cell = gBoard[i][j]
+            var txt = ''
+            if (cell.isRevealed && cell.minesAroundCount > 0) txt = cell.minesAroundCount
+            else if (cell.isMarked) txt = FLAG
+            renderCell(i, j, txt)
+        }
+    }
 }
 
 function setMines(i, j) {
@@ -293,7 +347,6 @@ function countNegs(board, i, j) {
     return count
 }
 
-
 function expandReveal(board, i, j, isRecursive = true, isTemporary = false) {
     for (var row = i - 1; row <= i + 1; row++) {
         if (row < 0 || row === board.length) continue
@@ -332,6 +385,17 @@ function restoreNegs(board, i, j) {
     }
 }
 
+function revealArea(board, posStart, posEnd) {
+    // console.log(posStart, posEnd)
+
+    for (var i = posStart.i; i <= posEnd.i; i++) {
+        for (var j = posStart.j; j <= posEnd.j; j++) {
+            revealCell(board, i, j, true)
+        }
+    }
+    setTimeout(() => { updateBoard() }, 2000)
+}
+
 function revealCell(board, i, j, isTemporary = false) {
     const cell = board[i][j]
     const currElCell = getElCell(i, j)
@@ -346,6 +410,7 @@ function revealCell(board, i, j, isTemporary = false) {
 }
 
 function unRevealCell(board, i, j) {
+    console.log('Unrevealing', i, j)
     const cell = board[i][j]
     const currElCell = getElCell(i, j)
 
@@ -368,12 +433,3 @@ function updateMark(cell, elCell, isMark) {
     elCell.innerText = isMark ? FLAG : ''
     renderMarkCounter()
 }
-
-
-
-// function isMineCell(i, j) {
-//     for (var m=0; m<gMines.length; m++) {
-//         const pos = gMines[m]
-//         if (pos.row === i && )
-//     }
-// }
