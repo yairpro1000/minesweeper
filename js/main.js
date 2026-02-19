@@ -46,9 +46,6 @@ var gSafeCells
 var gMegaPoss
 var gStates = []
 
-
-
-
 // Game flow functions:
 
 function onInit(userLevel) {
@@ -83,23 +80,25 @@ function onInit(userLevel) {
 
 }
 
-function onHintClicked() {
+function onHintClicked(elHintsCounter) {
     if (!gGame.isOn) return
+    if (elHintsCounter.classList.contains('disabled')) return
 
     gGame.isHintOn = !gGame.isHintOn
-    const hintsCounter = document.querySelector('.hints')
+    
     if (gGame.isHintOn) {
-        hintsCounter.classList.add('yellow')
-        hintsCounter.classList.remove('light', 'dark')
+        elHintsCounter.classList.add('yellow')
+        elHintsCounter.classList.remove('light', 'dark')
     }
     else {
-        hintsCounter.classList.remove('yellow')
-        hintsCounter.classList.add('light')
+        elHintsCounter.classList.remove('yellow')
+        elHintsCounter.classList.add('light')
     }
 }
 
-function OnSafeClicked() {
+function OnSafeClicked(elSafe) {
     if (!gGame.isOn) return
+    if (elSafe.classList.contains('disabled')) return
 
     if (!gGame.isOn || gGame.revealedCount + gLevel.mines === gLevel.size ** 2) {
         alert('No more safe cells to reveal')
@@ -126,6 +125,7 @@ function OnSafeClicked() {
 
 function onExterminatorClicked(elExterminator) {
     if (!gGame.isOn) return
+    if (elExterminator.classList.contains('disabled')) return
 
     elExterminator.classList.add('hidden')
     const numIter = Math.min(3, gLevel.mines)
@@ -145,6 +145,7 @@ function onExterminatorClicked(elExterminator) {
 
 function OnMegaClicked(elMega) {
     if (!gGame.isOn) return
+    if (elMega.classList.contains('disabled')) return
 
     gMegaPoss = []
     gGame.isMegaOn = true
@@ -153,6 +154,7 @@ function OnMegaClicked(elMega) {
 
 function OnManualClicked(elManual) {
     if (gMines.length > 0) return // There are already some mines
+    if (elManual.classList.contains('disabled')) return
 
     gMines = []
     gGame.isManualOn = true
@@ -160,10 +162,11 @@ function OnManualClicked(elManual) {
     elManual.classList.add('yellow')
 }
 
-function onUndoClicked() {
+function onUndoClicked(elUndo) {
     if (!gGame.isOn || gStates.length <= 1) return
+    if (elUndo.classList.contains('disabled')) return
+
     gStates.pop()
-    console.log(gStates)
     const preState = structuredClone(gStates[gStates.length - 1])
     gGame = preState.game
     gLevel = preState.level
