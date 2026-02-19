@@ -9,8 +9,8 @@ const WIN = '😎'
 const LIFE = '👼🏻'
 const LAST_LIFE = '☠️'
 const SAVED_LIFE = '🫠'
-const HINT_BULB = '📖' // '💡'
-const SAFE = '🛟'
+const HINT_BULB = '📖'
+const SAFE = '💡'
 
 const WARNING_CSS_CLASS = 'red'
 
@@ -78,6 +78,7 @@ function onInit(userLevel) {
     hideModal()
     renderLevelButtons()
     resetStats()
+    preventContextMenu()
     buildBoard()
 
 
@@ -360,7 +361,6 @@ function renderBoard() {
         strHTML += '</tr>'
     }
     elTable.innerHTML = strHTML
-    elTable.addEventListener("contextmenu", (e) => { e.preventDefault() })
 }
 
 function updateBoard(board) {

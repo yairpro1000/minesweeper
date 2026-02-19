@@ -6,10 +6,11 @@ var gIsLightMode = false
 
 
 function resetStats() {
+    renderTooltips()
     stopTimer()
     renderBestScore()
     document.querySelector('.timer').innerText = '000'
-    document.querySelector('.mark-count').innerText = '000'
+    document.querySelector('.mark-count').innerText = gLevel.mines + FLAG
     renderLivesCounter(gGame.lives)
     renderHintsCounter(gGame.hints)
     renderSafeClick(gGame.safeClicks)
@@ -34,7 +35,7 @@ function renderBestScore() {
 function renderMarkCounter() {
     // QUESTION: is it ok to use globals from another file?
     const count = gLevel.mines - gGame.markedCount
-    const countStr = `${count}`.padStart(3, 0)
+    const countStr = count + FLAG
     document.querySelector('.mark-count').innerText = countStr
 }
 
@@ -132,7 +133,7 @@ function lightMode(elBtn) {
     elBtn.classList.toggle('dark')
     elBtn.innerText = gIsLightMode? 'Dark Mode' : 'Light Mode'
     
-    const classes = ['box', 'board', 'stats', 'button', 'non-button', 'status']
+    const classes = ['box', 'board', 'stats', 'button', 'non-button', 'status', 'explanation']
     for (var i = 0; i < classes.length; i++) {
         var selector = '.' + classes[i]
         const els = document.querySelectorAll(selector)
@@ -192,4 +193,42 @@ function updateClasses(selector, _classes, isAdd = true) {
     const el = document.querySelector(selector)
     if (isAdd) el.classList.add(..._classes)
     else el.classList.remove(..._classes)
+}
+
+function renderTooltips() {
+    const TOOLTIPS = {
+        'status-emoji': 'Click any cell in the grid to start playing. Click me to restart.',
+        'mark-count': 'Flags remaining. Right-click a cell to flag it if you believe a mine is hiding there,\nor to unflag it if you change your mind.',
+        'lives': 'Lives. Chances to hit a mine before game over',
+        'best-score': 'Best time ever',
+        'mega': 'One time per game, click a top-left cell, then a bottom-right, to sneak a peak into the area',
+        'safe': 'Click me to highlight a safe cell...',
+        'hints': 'Click me, then click a cell to sneak a peak on its neighbors',
+        'exterminator': 'Once a game, get rid of 3 mines',
+        'manual': 'Place your own mines before you start playing',
+        'undo': 'Undo up to 5 moves'
+    }
+    for (var cls in TOOLTIPS) {
+        const el = document.querySelector('.' + cls)
+        el.setAttribute('data-title', TOOLTIPS[cls])
+    }
+}
+
+function preventContextMenu() {
+    // document.querySelector('table').addEventListener("contextmenu", (e) => { e.preventDefault() })
+    const elDivs = document.querySelectorAll('div')
+    for (var i = 0; i<elDivs.length; i++) {
+        elDivs[i].addEventListener("contextmenu", (e) => { e.preventDefault() })
+    }
+
+    const statButtons = document.querySelectorAll('.stats.button')
+    for (var i = 0; i<statButtons.length; i++) {
+        console.log(statButtons[i])
+        statButtons[i].setAttribute('oncontextmenu', 'disable(this)')
+    }
+
+}
+
+function disable(el) {
+    el.classList.toggle('disabled')
 }
