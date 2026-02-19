@@ -2,10 +2,12 @@
 
 var gTimerInterval
 var gFinishTime = 0
+var gIsLightMode = false
 
 
 function resetStats() {
     stopTimer()
+    renderBestScore()
     document.querySelector('.timer').innerText = '000'
     document.querySelector('.mark-count').innerText = '000'
     renderLivesCounter(gGame.lives)
@@ -13,8 +15,20 @@ function resetStats() {
     renderSafeClick(gGame.safeClicks)
     setSmily(SMILE)
     document.querySelector('.exterminator').classList.remove('hidden')
-    updateMega(['hidden', 'yellow'], false)
+    updateClasses('.mega', ['hidden', 'yellow'], false)
+    updateClasses('.manual', ['hidden', 'yellow'], false)
+    document.querySelector('.manual').innerText = '📍💣'
     document.querySelector('.box').classList.remove(WARNING_CSS_CLASS)
+}
+
+function renderBestScore() {
+    const bestScore = +localStorage.getItem('bestScore')
+    if (!bestScore) {
+        updateClasses('.best-score', ['hidden'])
+        return
+    }
+    document.querySelector('.best-score span').innerText = `${bestScore}`.padStart(3, 0)
+    updateClasses('.best-score', ['hidden'], false)
 }
 
 function renderMarkCounter() {
@@ -49,6 +63,8 @@ function renderHintsCounter(numHints) {
     }
     elHintsCounter.innerText = HINT_BULB.repeat(numHints)
     elHintsCounter.classList.remove('yellow', 'hidden')
+    if (gIsLightMode) elHintsCounter.classList.add('light')
+
 }
 
 function renderSafeClick(numSafeClicks) {
@@ -61,10 +77,9 @@ function renderSafeClick(numSafeClicks) {
     elSafeClick.classList.remove('yellow', 'hidden')
 }
 
-function updateMega(_classes, isAdd=true) {
-    const elMega = document.querySelector('.mega')
-    if (isAdd) elMega.classList.add(..._classes)
-    else elMega.classList.remove(..._classes)
+function renderManualMines() {
+    const elManu = document.querySelector('.manual')
+    elManu.innerText = (gLevel.mines - gMines.length) + MINE
 }
 
 function setSmily(emoji) {
@@ -112,6 +127,23 @@ function hideModal() {
     elModal.classList.add('modal-fade')
 }
 
+function lightMode(elBtn) {
+    gIsLightMode = !gIsLightMode
+    elBtn.classList.toggle('dark')
+    elBtn.innerText = gIsLightMode? 'Dark Mode' : 'Light Mode'
+    
+    const classes = ['box', 'board', 'stats', 'button', 'non-button', 'status']
+    for (var i = 0; i < classes.length; i++) {
+        var selector = '.' + classes[i]
+        const els = document.querySelectorAll(selector)
+        for (var j = 0; j < els.length; j++) {
+            if (gIsLightMode) els[j].classList.add('light')
+            else els[j].classList.remove('light')
+        }
+    }
+    renderBoard()
+}
+
 // for debug
 function revealBoard(board, isMinesOnly = false) {
     for (var i = 0; i < board.length; i++) {
@@ -121,7 +153,7 @@ function revealBoard(board, isMinesOnly = false) {
             if (cell.isMine) txt = MINE
             else if (isMinesOnly) continue
             else txt = cell.minesAroundCount
-            renderCell(i, j, txt)
+            renderCell(cell, i, j, txt)
         }
     }
 }
@@ -134,13 +166,12 @@ function revealNegs(board, isMinesOnly = false) {
             if (cell.isMine) txt = MINE
             else if (isMinesOnly) continue
             else txt = cell.minesAroundCount
-            renderCell(i, j, txt)
+            renderCell(cell, i, j, txt)
         }
     }
 }
 
-function renderCell(i, j, txt, _class = null) {
-    const cell = gBoard[i][j]
+function renderCell(cell, i, j, txt, _class = null) {
     const elCell = getElCell(i, j)
 
     elCell.innerText = txt
@@ -149,10 +180,16 @@ function renderCell(i, j, txt, _class = null) {
     else elCell.classList.remove('revealed')
 
     elCell.classList.remove('yellow')
-    
+
     if (_class) elCell.classList.toggle(_class)
 }
 
 function getElCell(i, j) {
     return document.querySelector(`.cell-${i}-${j}`)
+}
+
+function updateClasses(selector, _classes, isAdd = true) {
+    const el = document.querySelector(selector)
+    if (isAdd) el.classList.add(..._classes)
+    else el.classList.remove(..._classes)
 }

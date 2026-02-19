@@ -17,6 +17,7 @@ const WARNING_CSS_CLASS = 'red'
 const MAX_LIVES = 3 // set to -1 to avoid feature
 const MAX_HINTS = 3
 const MAX_SAFE_CLICKS = 3
+const MAX_UNDO = 6
 
 const LEVELS = {
     1: {
@@ -44,6 +45,8 @@ var gBoard
 var gMines
 var gSafeCells
 var gMegaPoss
+var gStates = []
+
 
 
 
@@ -53,7 +56,11 @@ function onInit(userLevel) {
     if (!userLevel && !gUserLevel) gUserLevel = 1 // Default beginner
     else if (userLevel) gUserLevel = userLevel // User clicked a specific level
     // else: there is already a gUserLevel from previous choice, so no need to update it
-    gLevel = LEVELS[gUserLevel]
+
+    gLevel = Object.assign({}, LEVELS[gUserLevel])
+
+    gMines = []
+    gStates = []
 
     gGame = {
         isOn: false,
@@ -65,6 +72,7 @@ function onInit(userLevel) {
         isHintOn: false,
         safeClicks: MAX_SAFE_CLICKS,
         isMegaOn: false,
+        isManualOn: false,
     }
 
     hideModal()
@@ -80,7 +88,14 @@ function onHintClicked() {
 
     gGame.isHintOn = !gGame.isHintOn
     const hintsCounter = document.querySelector('.hints')
-    hintsCounter.classList.toggle('yellow')
+    if (gGame.isHintOn) {
+        hintsCounter.classList.add('yellow')
+        hintsCounter.classList.remove('light', 'dark')
+    }
+    else {
+        hintsCounter.classList.remove('yellow')
+        hintsCounter.classList.add('light')
+    }
 }
 
 function OnSafeClicked() {
@@ -113,7 +128,6 @@ function onExterminatorClicked(elExterminator) {
     if (!gGame.isOn) return
 
     elExterminator.classList.add('hidden')
-
     const numIter = Math.min(3, gLevel.mines)
     for (var i = 0; i < numIter; i++) {
         const idx = getRandomInt(0, gMines.length)
@@ -125,10 +139,8 @@ function onExterminatorClicked(elExterminator) {
 
     }
     setMinesNegsCount(gBoard)
-    updateBoard()
-    // revealBoard(gBoard, true)
-
-
+    updateBoard(gBoard)
+    gStates.push(copyState())
 }
 
 function OnMegaClicked(elMega) {
@@ -139,7 +151,42 @@ function OnMegaClicked(elMega) {
     elMega.classList.add('yellow')
 }
 
+function OnManualClicked(elManual) {
+    if (gMines.length > 0) return // There are already some mines
+
+    gMines = []
+    gGame.isManualOn = true
+    renderManualMines()
+    elManual.classList.add('yellow')
+}
+
+function onUndoClicked() {
+    if (!gGame.isOn || gStates.length <= 1) return
+    gStates.pop()
+    console.log(gStates)
+    const preState = structuredClone(gStates[gStates.length - 1])
+    gGame = preState.game
+    gLevel = preState.level
+    gBoard = preState.board
+    gMines = preState.mines
+    updateBoard(gBoard)
+    renderMarkCounter()
+}
+
 function onCellClicked(elCell, i, j) {
+    if (gGame.isManualOn) {
+        gBoard[i][j].isMine = true
+        gMines.push({ row: i, col: j })
+        elCell.innerText = MINE
+        renderManualMines()
+        if (gMines.length === gLevel.mines) {
+            gGame.isManualOn = false
+            updateClasses('.manual', ['hidden'])
+            updateBoard(gBoard)
+        }
+        return
+    }
+
     if (!gGame.isOn) {
         if (gGame.revealedCount === 0) startGame()
         else return // Game over status. Clicking the board is blocked.
@@ -158,11 +205,11 @@ function onCellClicked(elCell, i, j) {
     if (gGame.isMegaOn) {
         gMegaPoss.push({ i, j })
         elCell.classList.add('yellow')
-        
+
         if (gMegaPoss.length === 2) {
             gGame.isMegaOn = false
             revealArea(gBoard, ...gMegaPoss)
-            updateMega(['hidden'])
+            updateClasses('.mega', ['hidden'])
         }
         return
     }
@@ -170,9 +217,9 @@ function onCellClicked(elCell, i, j) {
     if (gGame.revealedCount === 0) { // Set mines after the user clickes their first cell
         setMines(i, j)
         setMinesNegsCount(gBoard)
+        renderMarkCounter()
         // revealBoard(gBoard, false) // JUST FOR DEBUG
     }
-
 
     const cell = gBoard[i][j]
     if (cell.isMine) { // Clicked a mine
@@ -183,12 +230,17 @@ function onCellClicked(elCell, i, j) {
 
         gGame.lives--
         renderLivesCounter(gGame.lives)
-        renderCell(i, j, MINE, WARNING_CSS_CLASS)
-        setTimeout(() => { renderCell(i, j, '', WARNING_CSS_CLASS) }, 500)
+        renderCell(cell, i, j, MINE, WARNING_CSS_CLASS)
+        setTimeout(() => { renderCell(cell, i, j, '', WARNING_CSS_CLASS) }, 500)
 
     }
 
     expandReveal(gBoard, i, j)
+
+    if (gStates.length === MAX_UNDO) gStates = gStates.slice(1)
+
+    gStates.push(copyState())
+
     checkVictory()
 
 }
@@ -210,12 +262,15 @@ function onCellMarked(elCell, i, j) {
 
     updateMark(cell, elCell, true)
 
+    gStates.push(copyState())
+
     checkVictory()
 }
 
 function startGame() {
     gGame.isOn = true
     StartTimer()
+    updateClasses('.manual', ['hidden'])
 }
 
 function checkVictory() {
@@ -229,9 +284,15 @@ function gameOver(isVictory) {
     showModal(isVictory)
 
     if (isVictory && gGame.lives === 1) renderLivesCounter(0)
-    if (isVictory) setSmily(WIN)
-    else setSmily(LOSE)
-
+    if (!isVictory) {
+        setSmily(LOSE)
+        return
+    }
+    setSmily(WIN)
+    if (!localStorage.getItem('bestScore')) localStorage.setItem('bestScore', gFinishTime)
+    else if (+gFinishTime < +localStorage.getItem('bestScore')) {
+        localStorage.setItem('bestScore', gFinishTime)
+    }
 }
 
 
@@ -263,6 +324,17 @@ function createCells() {
     }
 }
 
+function copyBoard(orBoard) {
+    var board = []
+    for (var i = 0; i < orBoard.length; i++) {
+        board[i] = []
+        for (var j = 0; j < orBoard[i].length; j++) {
+            board[i][j] = Object.assign({}, gBoard[i][j])
+        }
+    }
+    return board
+}
+
 function createCell() {
     return {
         minesAroundCount: 0,
@@ -291,19 +363,21 @@ function renderBoard() {
     elTable.addEventListener("contextmenu", (e) => { e.preventDefault() })
 }
 
-function updateBoard() {
-    for (var i = 0; i < gBoard.length; i++) {
-        for (var j = 0; j < gBoard[i].length; j++) {
-            const cell = gBoard[i][j]
+function updateBoard(board) {
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board[i].length; j++) {
+            const cell = board[i][j]
             var txt = ''
             if (cell.isRevealed && cell.minesAroundCount > 0) txt = cell.minesAroundCount
             else if (cell.isMarked) txt = FLAG
-            renderCell(i, j, txt)
+            renderCell(cell, i, j, txt)
         }
     }
 }
 
 function setMines(i, j) {
+    if (gMines.length > 0) return // already manually set
+
     gMines = []
     for (var m = 0; m < gLevel.mines; m++) {
         const row = getRandomInt(0, gBoard.length)
@@ -317,8 +391,6 @@ function setMines(i, j) {
         gBoard[row][col].isMine = true
         gMines.push({ row, col })
     }
-
-    renderMarkCounter()
 }
 
 function setMinesNegsCount(board) {
@@ -386,14 +458,12 @@ function restoreNegs(board, i, j) {
 }
 
 function revealArea(board, posStart, posEnd) {
-    // console.log(posStart, posEnd)
-
     for (var i = posStart.i; i <= posEnd.i; i++) {
         for (var j = posStart.j; j <= posEnd.j; j++) {
             revealCell(board, i, j, true)
         }
     }
-    setTimeout(() => { updateBoard() }, 2000)
+    setTimeout(() => { updateBoard(gBoard) }, 2000)
 }
 
 function revealCell(board, i, j, isTemporary = false) {
@@ -410,7 +480,6 @@ function revealCell(board, i, j, isTemporary = false) {
 }
 
 function unRevealCell(board, i, j) {
-    console.log('Unrevealing', i, j)
     const cell = board[i][j]
     const currElCell = getElCell(i, j)
 
@@ -432,4 +501,13 @@ function updateMark(cell, elCell, isMark) {
     gGame.markedCount += isMark ? 1 : -1
     elCell.innerText = isMark ? FLAG : ''
     renderMarkCounter()
+}
+
+function copyState() {
+    return {
+        game: structuredClone(gGame),
+        level: structuredClone(gLevel),
+        board: structuredClone(gBoard),
+        mines: structuredClone(gMines),
+    }
 }
