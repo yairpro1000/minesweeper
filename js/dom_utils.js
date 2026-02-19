@@ -20,6 +20,7 @@ function resetStats() {
     updateClasses('.manual', ['hidden', 'yellow'], false)
     document.querySelector('.manual').innerText = '📍💣'
     document.querySelector('.box').classList.remove(WARNING_CSS_CLASS)
+    implementLightDarkMode()
 }
 
 function renderBestScore() {
@@ -48,7 +49,7 @@ function renderLivesCounter(numLives) {
 
     elLifeCounter.classList.remove('hidden', WARNING_CSS_CLASS)
     if (numLives === 1) {
-        elLifeCounter.innerText = LAST_LIFE
+        elLifeCounter.innerText = SCARED
         elLifeCounter.classList.add(WARNING_CSS_CLASS)
         setSmily(SCARED)
     }
@@ -128,10 +129,24 @@ function hideModal() {
     elModal.classList.add('modal-fade')
 }
 
-function lightMode(elBtn) {
-    gIsLightMode = !gIsLightMode
-    elBtn.classList.toggle('dark')
-    elBtn.innerText = gIsLightMode? 'Dark Mode' : 'Light Mode'
+function onLightModeClicked(elBtn) {
+    const currLightMode = elBtn.innerText.indexOf('Light') === -1
+
+    gIsLightMode = !currLightMode
+    implementLightDarkMode()
+
+     if (gIsLightMode) {
+        elBtn.classList.add('dark')
+        elBtn.innerText = 'Dark Mode'
+    }
+    else {
+        elBtn.classList.remove('dark')
+        elBtn.innerText = 'Light Mode'
+    }
+}
+
+function implementLightDarkMode() {
+    const elBtn = document.querySelector('.light-mode')
     
     const classes = ['box', 'board', 'stats', 'button', 'non-button', 'status', 'explanation']
     for (var i = 0; i < classes.length; i++) {
@@ -142,7 +157,7 @@ function lightMode(elBtn) {
             else els[j].classList.remove('light')
         }
     }
-    renderBoard()
+    buildBoard()
 }
 
 // for debug
@@ -223,7 +238,6 @@ function preventContextMenu() {
 
     const statButtons = document.querySelectorAll('.stats.button')
     for (var i = 0; i<statButtons.length; i++) {
-        console.log(statButtons[i])
         statButtons[i].setAttribute('oncontextmenu', 'disable(this)')
     }
 

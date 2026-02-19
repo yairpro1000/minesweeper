@@ -17,8 +17,8 @@ body {
     font-variant: small-caps;
     color: rgb(1, 1, 55);
     background-image: url("../flowers.webp");
-    background-size: cover;
-    background-repeat: no-repeat;
+    background-size:cover;
+    background-repeat: repeat;
 }
 
 .button:not(.disabled):hover {
@@ -125,7 +125,7 @@ td button {
     font-family: "Wallpoet", sans-serif;
     /* font-weight: 400; */
     font-style: normal;
-    font-size: 20px;
+    font-size: 26px;
     color: white;
     /* background-color: rgb(87, 186, 248); */
     background-color: rgb(1, 1, 55);
@@ -139,7 +139,7 @@ td button {
 
 .stats .button {
     background-color: rgb(1, 1, 55);
-    font-size: 20px;
+    font-size: 35px;
 }
 
 .non-button {
@@ -154,13 +154,14 @@ td button {
 }
 
 .timer {
-    width: 25px;
+    width: 50px;
     padding: 0;
 }
 
 .best-score {
     font-size: 15px;
     color: rgb(87, 186, 248);
+    width: 8%;
 }
 
 .status:not(.light) {
