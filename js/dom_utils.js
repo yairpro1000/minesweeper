@@ -216,10 +216,10 @@ function renderTooltips() {
         'mark-count': 'Flags remaining. Right-click a cell to flag it if you believe a mine is hiding there,\nor to unflag it if you change your mind.',
         'lives': 'Lives. Chances to hit a mine before game over',
         'best-score': 'Best time ever',
-        'mega': 'One time per game, click a top-left cell, then a bottom-right, to sneak a peak into the area',
+        'mega': 'Once per game, click a top-left cell, then a bottom-right, to sneak a peak into the area',
         'safe': 'Click me to highlight a safe cell...',
         'hints': 'Click me, then click a cell to sneak a peak on its neighbors',
-        'exterminator': 'Once a game, get rid of 3 mines',
+        'exterminator': 'Once per game, get rid of 3 mines',
         'manual': 'Place your own mines before you start playing',
         'undo': 'Undo up to 5 moves'
     }
@@ -245,4 +245,5 @@ function preventContextMenu() {
 
 function disable(el) {
     el.classList.toggle('disabled')
+
 }
