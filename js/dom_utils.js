@@ -245,5 +245,4 @@ function preventContextMenu() {
 
 function disable(el) {
     el.classList.toggle('disabled')
-
 }

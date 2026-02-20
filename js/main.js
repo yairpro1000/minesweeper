@@ -178,6 +178,7 @@ function onUndoClicked(elUndo) {
 
 function onCellClicked(elCell, i, j) {
     if (gGame.isManualOn) {
+        if (gBoard[i][j].isMine) return // cell already has a mine
         gBoard[i][j].isMine = true
         gMines.push({ row: i, col: j })
         elCell.innerText = MINE
