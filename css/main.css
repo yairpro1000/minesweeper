@@ -177,7 +177,7 @@ td button {
     position: absolute;
     max-width: fit-content;
     left: 50%;
-    bottom: 2%;
+    bottom: 30%;
     transform: translate(-50%, -50%);
     border: 2px solid rgb(156, 217, 237);
     color: aliceblue;
@@ -204,7 +204,11 @@ td button {
 
 .red {
     background-color: red;
-    border: 3px red;
+    border: 3px solid red;
+}
+
+.red.modal {
+    border: 3px solid black
 }
 
 .yellow {
