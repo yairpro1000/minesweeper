@@ -6,6 +6,7 @@ var gIsLightMode = false
 
 
 function resetStats() {
+    toggleSpecialPowers()
     renderTooltips()
     stopTimer()
     renderBestScore()
@@ -101,6 +102,14 @@ function StartTimer() {
 function stopTimer() {
     clearInterval(gTimerInterval)
     gTimerInterval = null
+}
+
+function toggleSpecialPowers(elCheckbox=null) {
+    const elSpecialDiv = document.querySelector('div.special-pows')
+    if (!elCheckbox) elCheckbox = document.querySelector("input.checkbox")
+
+    if (elCheckbox.checked) elSpecialDiv.classList.remove('hidden')
+    else elSpecialDiv.classList.add('hidden')
 }
 
 function showModal(isVictory = false) {
@@ -235,12 +244,6 @@ function preventContextMenu() {
     for (var i = 0; i<elDivs.length; i++) {
         elDivs[i].addEventListener("contextmenu", (e) => { e.preventDefault() })
     }
-
-    const statButtons = document.querySelectorAll('.stats.button')
-    for (var i = 0; i<statButtons.length; i++) {
-        statButtons[i].setAttribute('oncontextmenu', 'disable(this)')
-    }
-
 }
 
 function disable(el) {

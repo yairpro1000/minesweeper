@@ -26,7 +26,8 @@
             <span class="stats non-button timer">000 </span>
             <span class="stats non-button best-score">🏆<span></span></span>
         </div>
-        <div>
+        <label><input type="checkbox" class="checkbox" onclick="toggleSpecialPowers(this)"><span class="checkbox">Special Powers</span></label>
+        <div class="special-pows">
             <span class="stats button mega" onclick="OnMegaClicked(this)">Mega</span>
             <span class="stats button safe" onclick="OnSafeClicked(this)"></span>
             <span class="stats button hints" onclick="onHintClicked(this)"></span>
@@ -34,7 +35,7 @@
             <span class="stats button manual" onclick="OnManualClicked(this)">📍💣</span>
             <span class="stats button undo" onclick="onUndoClicked(this)">↩️</span>
         </div>
-        <h6 class="explanation">👆🏻Right-click any special button to disable/re-enable it</h6>
+        
         <div class="box board">
             <table></table>
         </div>

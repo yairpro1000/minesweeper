@@ -56,7 +56,7 @@ div {
     margin: 10px;
 }
 
-h6 {
+h6, .checkbox {
     color: white;
 }
 
