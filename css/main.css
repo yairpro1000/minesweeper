@@ -18,7 +18,7 @@ body {
     color: rgb(1, 1, 55);
     background-image: url("../flowers.webp");
     background-size:cover;
-    background-repeat: repeat;
+    background-repeat:no-repeat;
 }
 
 .button:not(.disabled):hover {
