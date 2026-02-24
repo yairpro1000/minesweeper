@@ -17,6 +17,7 @@ function resetStats() {
     renderLivesCounter(gGame.lives)
     renderHintsCounter(gGame.hints)
     renderSafeClick(gGame.safeClicks)
+    resetManualMode()
     renderTooltips()
     toggleSpecialPowers()
     setSmily(SMILE)
@@ -27,7 +28,7 @@ function resetStats() {
     
     document.querySelector('.timer').innerText = '000'
     document.querySelector('.mark-count').innerText = gLevel.mines + FLAG
-    document.querySelector('.manual').innerText = '📍💣'
+    
     document.querySelector('.box').classList.remove(WARNING_CSS_CLASS)
 }
 
@@ -77,6 +78,12 @@ function renderLivesCounter(numLives) {
     }
     else if (numLives === 0) elLifeCounter.innerText = SAVED_LIFE
     else elLifeCounter.innerText = LIFE.repeat(numLives)
+}
+
+function resetManualMode() {
+    const elManual = document.querySelector('.manual')
+    elManual.innerText = '📍💣'
+    updateClasses('.manual', ['yellow'], false)
 }
 
 function renderHintsCounter(numHints) {
