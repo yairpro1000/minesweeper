@@ -14,36 +14,49 @@
     <h3 style="color: rgb(1, 1, 55); position: relative;">Yair Benharroch</h3>
     <h1>💣MineSweeper💣</h1>
     <h4 class="light-mode light" onclick="onLightModeClicked(this)">Light Mode</h4>
-    <div class="levels"></div>
+    <div class="levels">
+        <table></table>
+    </div>
     <div class="box">
-        <!-- <input type="number" oninput="onInit()" value="3" min="2" max="6" onkeydown="return false"> -->
-        <div>
-            <span class="stats button status-emoji" onclick="onInit()" >😊</span>
+        <div class="counters">
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="stats non-button mark-count">🚩</td>
+                        <td class="stats non-button lives"></td>
+                        <td class="stats non-button timer-box"><span class="timer">000</span><span
+                                class="best-score"></span></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <div>
-            <span class="stats non-button mark-count">🚩</span>
-            <span class="stats non-button lives"></span>
-            <span class="stats non-button timer">000 </span>
-            <span class="stats non-button best-score">🏆<span></span></span>
-        </div>
-        <label><input type="checkbox" class="checkbox" onclick="toggleSpecialPowers(this)"><span class="checkbox">Special Powers</span></label>
         <div class="special-pows">
-            <span class="stats button mega" onclick="OnMegaClicked(this)">Mega</span>
-            <span class="stats button safe" onclick="OnSafeClicked(this)"></span>
-            <span class="stats button hints" onclick="onHintClicked(this)"></span>
-            <span class="stats button exterminator" onclick="onExterminatorClicked(this)">💥</span>
-            <span class="stats button manual" onclick="OnManualClicked(this)">📍💣</span>
-            <span class="stats button undo" onclick="onUndoClicked(this)">↩️</span>
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="stats button speical mega" onclick="OnMegaClicked(this)">⚡️</td>
+                        <td class="stats button speical safe" onclick="OnSafeClicked(this)"></td>
+                        <td class="stats button speical hints" onclick="onHintClicked(this)"></td>
+                        <td class="stats button speical exterminator" onclick="onExterminatorClicked(this)">💥</td>
+                        <td class="stats button speical manual" onclick="OnManualClicked(this)">📍💣</td>
+                        <td class="stats button speical undo" onclick="onUndoClicked(this)">↩️</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        
-        <div class="box board">
+        <label><input type="checkbox" class="checkbox" onclick="toggleSpecialPowers(this)"><span
+                class="checkbox">Special Powers</span></label>
+        <div class="status-emoji">
+            <span class="stats button status-emoji" onclick="onInit()">😊</span>
+        </div>
+
+        <div class="board">
             <table></table>
         </div>
     </div>
 
     <div class="modal">
         <h4><span></span><br>in <span></span> seconds</h4>
-        <!-- <button onclick="onInit()">New Game</button> -->
     </div>
 
     <script src="js/main.js"></script>

@@ -72,7 +72,6 @@ function onInit(userLevel) {
     }
 
     hideModal()
-    renderLevelButtons()
     resetStats()
     preventContextMenu()
     buildBoard()
@@ -127,7 +126,7 @@ function onExterminatorClicked(elExterminator) {
     if (!gGame.isOn) return
     if (elExterminator.classList.contains('disabled')) return
 
-    elExterminator.classList.add('hidden')
+    elExterminator.classList.add('disabled')
     const numIter = Math.min(3, gLevel.mines)
     for (var i = 0; i < numIter; i++) {
         const idx = getRandomInt(0, gMines.length)
@@ -185,7 +184,7 @@ function onCellClicked(elCell, i, j) {
         renderManualMines()
         if (gMines.length === gLevel.mines) {
             gGame.isManualOn = false
-            updateClasses('.manual', ['hidden'])
+            updateClasses('.manual', ['disabled'])
             updateBoard(gBoard)
         }
         return
@@ -213,7 +212,9 @@ function onCellClicked(elCell, i, j) {
         if (gMegaPoss.length === 2) {
             gGame.isMegaOn = false
             revealArea(gBoard, ...gMegaPoss)
-            updateClasses('.mega', ['hidden'])
+            updateClasses('.mega', ['yellow'], false)
+            updateClasses('.mega', ['disabled'])
+
         }
         return
     }
@@ -236,10 +237,13 @@ function onCellClicked(elCell, i, j) {
         renderLivesCounter(gGame.lives)
         renderCell(cell, i, j, MINE, WARNING_CSS_CLASS)
         setTimeout(() => { renderCell(cell, i, j, '', WARNING_CSS_CLASS) }, 500)
-
+        return
     }
 
-    expandReveal(gBoard, i, j)
+    if (cell.isRevealed) return
+
+    revealCell(gBoard, i, j)
+    if (cell.minesAroundCount === 0) expandReveal(gBoard, i, j)
 
     if (gStates.length === MAX_UNDO) gStates = gStates.slice(1)
 
@@ -274,7 +278,7 @@ function onCellMarked(elCell, i, j) {
 function startGame() {
     gGame.isOn = true
     StartTimer()
-    updateClasses('.manual', ['hidden'])
+    updateClasses('.manual', ['disabled'])
 }
 
 function checkVictory() {
@@ -301,17 +305,6 @@ function gameOver(isVictory) {
 
 
 // Board functions
-
-function renderLevelButtons() {
-    const elDiv = document.querySelector('.levels')
-
-    var strHTML = ''
-    for (var level in LEVELS) {
-        strHTML += `<span class="stats button" onclick="onInit(${level})">${LEVELS[level].name}</span>\n`
-    }
-
-    elDiv.innerHTML = strHTML
-}
 
 function buildBoard() {
     createCells()

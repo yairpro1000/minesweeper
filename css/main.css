@@ -1,7 +1,11 @@
+* {
+    box-sizing: border-box;
+}
+
 :root {
     --bg: #c0c0c0;
     /* classic gray */
-    --light: #ffffff;
+    --light: #eae8e8;
     /* highlight edge */
     --mid: #d9d9d9;
     /* inner light */
@@ -9,7 +13,9 @@
     /* shadow edge */
     --darker: #404040;
     /* deepest shadow */
+    --box-width: 39rem;
 }
+
 
 body {
     text-align: center;
@@ -17,14 +23,8 @@ body {
     font-variant: small-caps;
     color: rgb(1, 1, 55);
     background-image: url("../flowers.webp");
-    background-size:cover;
-    background-repeat:no-repeat;
-}
-
-.button:not(.disabled):hover {
-    /* content: attr(data-title); */
-    background-color: blue;
-    color: white;
+    background-size: 120vw;
+    background-repeat:repeat;
 }
 
 [data-title] {
@@ -41,7 +41,6 @@ body {
     font-size: 15px;
     padding: 5px;
     width: max-content;
-    /* white-space: normal; */
     opacity: 0;
     transition: opacity 1s ease;
     pointer-events: none;
@@ -52,15 +51,39 @@ body {
     opacity: 1;
 }
 
-div {
-    margin: 10px;
-}
-
 h6, .checkbox {
     color: white;
 }
 
-table {
+.levels {
+    margin: 0;
+}
+
+.levels table {
+    margin: 0 auto;
+}
+
+.levels td {
+    width: calc(var(--box-width) / 3);
+}
+
+.levels td:not(.light) {
+    background-color: rgb(1, 1, 55);
+}
+
+.levels span {
+    margin: 5px 0;
+}
+
+.box {
+    width: var(--box-width);
+    padding: 0px 0px 10vh;
+    background-color: rgb(1, 1, 55);
+    margin: 0px auto;
+    opacity: 0.9;
+}
+
+.board table {
     margin: 0 auto;
     border-collapse: collapse;
     border-spacing: 0px;
@@ -79,34 +102,23 @@ td button {
     place-items: center;
 }
 
-.box {
-    max-width: fit-content;
-    padding: 20px;
-    background-color: rgb(1, 1, 55);
-    /* border-radius: 20% 0%; */
-    margin: 10px auto 20px auto;
-    opacity: 0.9;
-}
-
-.board {
-    /* max-width: 250px; */
-}
-
 .button {
     width: 40px;
     height: 40px;
     cursor: pointer;
-    border-radius: 20%;
     border-top: 3px solid var(--light);
     border-left: 3px solid var(--light);
     border-right: 3px solid var(--dark);
     border-bottom: 3px solid var(--dark);
-    /* padding: 0px; */
+}
+
+.button:not(.disabled):hover {
+    background-color: blue;
+    color: white;
 }
 
 .revealed {
     background-color: rgb(174, 212, 216);
-    /* border: 3px solid rgb(255, 255, 255); */
     color: rgb(2, 32, 57);
     font-style: oblique;
     font-size: large;
@@ -116,68 +128,53 @@ td button {
     border-bottom: 3px solid var(--light);
 }
 
-.levels {
-    margin: 2%;
-}
-
 .stats {
-    /* font-family: 'Orbitron', system-ui, sans-serif; */
     font-family: "Wallpoet", sans-serif;
-    /* font-weight: 400; */
     font-style: normal;
     font-size: 26px;
     color: white;
-    /* background-color: rgb(87, 186, 248); */
     background-color: rgb(1, 1, 55);
-    width: 100px;
+    background-color:  hsla(203, 83%, 75%, 0.159);
     height: 30px;
-    margin: 10px;
-    /* border-radius: 20% 0%; */
-    padding: 5px;
+    margin: 5px 0px;
+    padding: 5px 0;
+    box-sizing:border-box;
     place-items: center;
 }
 
-.stats .button {
-    background-color: rgb(1, 1, 55);
-    font-size: 35px;
+.stats.button.speical {
+    font-size: 26px;
+    width: calc(var(--box-width) / 6);
 }
 
 .non-button {
-    /* background-color: rgb(1, 1, 55); */
-    /* border: 3px solid rgb(1, 1, 55); */
-    display: inline-block;
+    background-color:  hsla(203, 83%, 75%, 0.159);
+    border: 0px solid gray;
+    width: calc(var(--box-width) / 3);
 }
 
 .status-emoji {
+    margin: 20px auto;
     padding: 10px 20px;
     font-size: 30px;
 }
 
 .timer {
-    width: 50px;
     padding: 0;
 }
 
 .best-score {
     font-size: 15px;
     color: rgb(87, 186, 248);
-    width: 8%;
+    position: relative;
+    margin-top: 1%;
 }
-
-.status:not(.light) {
-    border-bottom: solid white;
-}
-
-/* 
-.lives {
-    border: solid lightblue;
-} */
 
 .modal {
     position: absolute;
-    max-width: fit-content;
-    left: 50%;
-    bottom: 30%;
+    width: 15vw;
+    left: 49vw;
+    top: 10vh;
     transform: translate(-50%, -50%);
     border: 2px solid rgb(156, 217, 237);
     color: aliceblue;
@@ -192,14 +189,10 @@ td button {
     color: rgb(137, 193, 242);
 }
 
-.hidden {
-    display: none;
-}
-
 .modal-fade {
     opacity: 0;
-    bottom: 90%
-        /* position: absolute */
+    top: 100vh;
+    z-index: 0; 
 }
 
 .red {
@@ -214,7 +207,6 @@ td button {
 .yellow {
     background-color: yellow;
     color: rgb(1, 1, 55);
-    /* border: 3px yellow; */
 }
 
 .light-mode {
@@ -227,14 +219,16 @@ td button {
 
 .light {
     background-color: white;
-    /* border: solid white; */
     color: rgb(1, 1, 55);
 }
 
 .dark {
     background-color: rgb(1, 1, 55);
-    /* border: solid white; */
     color: white;
+}
+
+.hidden {
+    display: none;
 }
 
 .disabled {

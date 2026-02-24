@@ -4,34 +4,55 @@ var gTimerInterval
 var gFinishTime = 0
 var gIsLightMode = false
 
+const COLORS = {
+    1: "#0100f8",
+
+}
 
 function resetStats() {
-    toggleSpecialPowers()
-    renderTooltips()
     stopTimer()
+    
+    renderLevelButtons()
     renderBestScore()
-    document.querySelector('.timer').innerText = '000'
-    document.querySelector('.mark-count').innerText = gLevel.mines + FLAG
     renderLivesCounter(gGame.lives)
     renderHintsCounter(gGame.hints)
     renderSafeClick(gGame.safeClicks)
+    renderTooltips()
+    toggleSpecialPowers()
     setSmily(SMILE)
-    document.querySelector('.exterminator').classList.remove('hidden')
-    updateClasses('.mega', ['hidden', 'yellow'], false)
-    updateClasses('.manual', ['hidden', 'yellow'], false)
+    
+    resetAllDisabled()
+    
+    implementLightDarkMode()
+    
+    document.querySelector('.timer').innerText = '000'
+    document.querySelector('.mark-count').innerText = gLevel.mines + FLAG
     document.querySelector('.manual').innerText = '📍💣'
     document.querySelector('.box').classList.remove(WARNING_CSS_CLASS)
-    implementLightDarkMode()
+}
+
+function renderLevelButtons() {
+    const elDiv = document.querySelector('.levels table')
+
+    var strHTML = '<tr>'
+    for (var level in LEVELS) {
+        const levelName = LEVELS[level].name
+        const numPadding = Math.ceil((14 - levelName.length) / 2)
+        var levelStr = '-'.repeat(numPadding) + levelName + '-'.repeat(numPadding)
+
+        strHTML += `<td class="stats button" onclick="onInit(${level})">\n
+        ${levelName}\n
+        </td>`
+    }
+    strHTML += '\n</tr>'
+
+    elDiv.innerHTML = strHTML
 }
 
 function renderBestScore() {
     const bestScore = +localStorage.getItem('bestScore')
-    if (!bestScore) {
-        updateClasses('.best-score', ['hidden'])
-        return
-    }
-    document.querySelector('.best-score span').innerText = `${bestScore}`.padStart(3, 0)
-    updateClasses('.best-score', ['hidden'], false)
+    const elBest = document.querySelector('.best-score')
+    elBest.innerText = bestScore? `  🏆${bestScore}`.padStart(3, 0) : ''
 }
 
 function renderMarkCounter() {
@@ -44,11 +65,11 @@ function renderMarkCounter() {
 function renderLivesCounter(numLives) {
     const elLifeCounter = document.querySelector('.lives')
     if (numLives === -1) {
-        elLifeCounter.classList.add('hidden')
+        elLifeCounter.classList.add('disabled')
         return
     }
 
-    elLifeCounter.classList.remove('hidden', WARNING_CSS_CLASS)
+    elLifeCounter.classList.remove('disabled', WARNING_CSS_CLASS)
     if (numLives === 1) {
         elLifeCounter.innerText = SCARED
         elLifeCounter.classList.add(WARNING_CSS_CLASS)
@@ -61,11 +82,11 @@ function renderLivesCounter(numLives) {
 function renderHintsCounter(numHints) {
     const elHintsCounter = document.querySelector('.hints')
     if (numHints === 0) {
-        elHintsCounter.classList.add('hidden')
+        elHintsCounter.classList.add('disabled')
         return
     }
     elHintsCounter.innerText = HINT_BULB.repeat(numHints)
-    elHintsCounter.classList.remove('yellow', 'hidden')
+    elHintsCounter.classList.remove('yellow', 'disabled')
     if (gIsLightMode) elHintsCounter.classList.add('light')
 
 }
@@ -73,11 +94,11 @@ function renderHintsCounter(numHints) {
 function renderSafeClick(numSafeClicks) {
     const elSafeClick = document.querySelector('.safe')
     if (numSafeClicks === 0) {
-        elSafeClick.classList.add('hidden')
+        elSafeClick.classList.add('disabled')
         return
     }
     elSafeClick.innerText = SAFE.repeat(numSafeClicks)
-    elSafeClick.classList.remove('yellow', 'hidden')
+    elSafeClick.classList.remove('yellow', 'disabled')
 }
 
 function renderManualMines() {
@@ -86,7 +107,7 @@ function renderManualMines() {
 }
 
 function setSmily(emoji) {
-    document.querySelector('.status-emoji').innerText = emoji
+    document.querySelector('span.status-emoji').innerText = emoji
 }
 
 function StartTimer() {
@@ -104,7 +125,7 @@ function stopTimer() {
     gTimerInterval = null
 }
 
-function toggleSpecialPowers(elCheckbox=null) {
+function toggleSpecialPowers(elCheckbox = null) {
     const elSpecialDiv = document.querySelector('div.special-pows')
     if (!elCheckbox) elCheckbox = document.querySelector("input.checkbox")
 
@@ -144,7 +165,7 @@ function onLightModeClicked(elBtn) {
     gIsLightMode = !currLightMode
     implementLightDarkMode()
 
-     if (gIsLightMode) {
+    if (gIsLightMode) {
         elBtn.classList.add('dark')
         elBtn.innerText = 'Dark Mode'
     }
@@ -156,8 +177,8 @@ function onLightModeClicked(elBtn) {
 
 function implementLightDarkMode() {
     const elBtn = document.querySelector('.light-mode')
-    
-    const classes = ['box', 'board', 'stats', 'button', 'non-button', 'status', 'explanation']
+
+    const classes = ['box', 'board', 'stats', 'button', 'non-button', 'status', 'explanation', 'checkbox']
     for (var i = 0; i < classes.length; i++) {
         var selector = '.' + classes[i]
         const els = document.querySelectorAll(selector)
@@ -224,7 +245,7 @@ function renderTooltips() {
         'status-emoji': 'Click any cell in the grid to start playing. Click me to restart.',
         'mark-count': 'Flags remaining. Right-click a cell to flag it if you believe a mine is hiding there,\nor to unflag it if you change your mind.',
         'lives': 'Lives. Chances to hit a mine before game over',
-        'best-score': 'Best time ever',
+        // 'best-score': 'Best time ever',
         'mega': 'Once per game, click a top-left cell, then a bottom-right, to sneak a peak into the area',
         'safe': 'Click me to highlight a safe cell...',
         'hints': 'Click me, then click a cell to sneak a peak on its neighbors',
@@ -241,8 +262,19 @@ function renderTooltips() {
 function preventContextMenu() {
     // document.querySelector('table').addEventListener("contextmenu", (e) => { e.preventDefault() })
     const elDivs = document.querySelectorAll('div')
-    for (var i = 0; i<elDivs.length; i++) {
+    for (var i = 0; i < elDivs.length; i++) {
         elDivs[i].addEventListener("contextmenu", (e) => { e.preventDefault() })
+    }
+}
+
+function resetAllDisabled() {
+    const tags = ['div', 'span', 'td', 'button']
+    for (var i = 0; i < tags.length; i++) {
+        const els = document.querySelectorAll(tags[i])
+
+        for (var j = 0; j < els.length; j++) {
+            els[j].classList.remove('disabled')
+        }
     }
 }
 
